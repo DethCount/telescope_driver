@@ -4,7 +4,7 @@ Drive telescope motors
 Allowing command execution through SPI and Serial bus
 
 # telescope_controller
-Arduino Uno with HM-10 module Bluetooth Low Energy Connected with telescope_driver through SPI (pins 50, 51, 52, 53)
+Arduino Uno (VMA101) with Bluetooth Low Energy HM-10 module (VMA338) Connected with telescope_driver through SPI (pins 50, 51, 52, 53)
 Proxies Bluetooth data to SPI
 
 # References
@@ -13,3 +13,7 @@ https://github.com/arduino/Arduino
 https://github.com/arduino/ArduinoCore-avr/blob/9f8d27f09f3bbd1da1374b5549a82bda55d45d44/variants/mega/pins_arduino.h
 https://www.arduino.cc/en/reference/SPI
 
+# Datasheets
+https://ww1.microchip.com/downloads/en/devicedoc/atmel-2549-8-bit-avr-microcontroller-atmega640-1280-1281-2560-2561_datasheet.pdf
+https://www.velleman.eu/downloads/29/vma100_vma101_vma102_vma103_a4v01.pdf
+https://www.velleman.eu/downloads/29/vma338_a4v02.pdf
