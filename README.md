@@ -17,3 +17,16 @@ https://www.arduino.cc/en/reference/SPI
 https://ww1.microchip.com/downloads/en/devicedoc/atmel-2549-8-bit-avr-microcontroller-atmega640-1280-1281-2560-2561_datasheet.pdf \
 https://www.velleman.eu/downloads/29/vma100_vma101_vma102_vma103_a4v01.pdf \
 https://www.velleman.eu/downloads/29/vma338_a4v02.pdf
+
+# Testing with Raspberry Pi 3B+
+sudo bluetoothctl
+> connect D8:A9:8B:7E:1E:D2 \
+> menu gatt \
+> select-attribute 0000ffe1-0000-1000-8000-008805f9b34fb \
+> acquire-write
+
+AcquireWrite success: fd 7 MTU 23 \
+
+> quit
+
+echo 'startMotorRun' > /proc/$(pgrep bluetoothctl)/fd/7
