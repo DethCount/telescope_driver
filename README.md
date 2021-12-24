@@ -25,7 +25,7 @@ sudo bluetoothctl
 > select-attribute 0000ffe1-0000-1000-8000-008805f9b34fb \
 > acquire-write
 
-AcquireWrite success: fd 7 MTU 23 \
+AcquireWrite success: fd 7 MTU 23
 
 > quit
 
