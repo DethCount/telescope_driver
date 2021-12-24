@@ -18,6 +18,10 @@ https://ww1.microchip.com/downloads/en/devicedoc/atmel-2549-8-bit-avr-microcontr
 https://www.velleman.eu/downloads/29/vma100_vma101_vma102_vma103_a4v01.pdf \
 https://www.velleman.eu/downloads/29/vma338_a4v02.pdf
 
+# Power
+12V - 5A in MKS Base 1.0
+connect VCC + GND from SPI into VIN + GND on Arduino Uno
+
 # Testing with Raspberry Pi 3B+
 sudo bluetoothctl
 > connect D8:A9:8B:7E:1E:D2 \
