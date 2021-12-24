@@ -1,3 +1,11 @@
+#define MY_ENABLE_SPI 1
+#define MY_ENABLE_SERIAL 1
+
+#if MY_ENABLE_SPI
+  #include <string.h>
+  #include <SPI.h>
+#endif
+
 #define MY_USE_TIMERS 1
 
 #if MY_USE_TIMERS
@@ -32,6 +40,12 @@
 #define ONE_LED_PIN        65 // power switch led, LOW = ON
 #define ONE_BUTTON_PIN     18 // power switch button
 #define ONE_BUTTON_DELAY   50 // ms
+
+
+#define MISO_PIN          50  // B3
+#define MOSI_PIN          51  // B2
+#define SCK_PIN           52   // B1
+#define SS_PIN            53    // B0
 
 #if MY_USE_TIMERS
   // #define F_CPU              16000000UL
@@ -301,6 +315,25 @@ int timer2_stepState;
   }
 #endif
 
+#if MY_ENABLE_SPI
+  String spiBuffer;
+  String spiProcessBuffer;
+  volatile bool spiProcess;
+  
+  ISR (SPI_STC_vect) {
+    char c = SPDR;  // grab byte from SPI Data Register
+    
+    if (c == '\n') {
+      spiProcessBuffer = "";
+      spiProcessBuffer.concat(spiBuffer);
+      spiBuffer = "";
+      spiProcess = true;
+      return;
+    }
+
+    spiBuffer.concat(c);
+  }
+#endif
 
 void setup() {
   pinMode(X_STEP_PIN, OUTPUT);
@@ -327,6 +360,9 @@ void setup() {
   
   digitalWrite(X_DIR_PIN, LOW);
 
+  pinMode(0, OUTPUT);
+  digitalWrite(0, HIGH);
+
   lastBtnRead = HIGH;
   lastBtnState = false;
   btnState = false;
@@ -346,6 +382,23 @@ void setup() {
   Serial.println("Using timers");
   Serial.println(AS2);
   Serial.println(EXCLK);
+  #endif
+
+  #if MY_ENABLE_SPI
+    // turn on SPI in slave mode
+    SPCR |= bit(SPE);
+    SPCR |= bit(SPIE);/*
+    SPCR |= bit(CPOL);
+    
+    pinMode(MOSI, INPUT);
+    pinMode(MISO, OUTPUT);
+    pinMode(SCK, INPUT);*/
+    pinMode(SS, INPUT);
+
+    // get ready for an interrupt
+    spiBuffer = "";
+    spiProcess = false;
+    SPI.attachInterrupt();
   #endif
   
   prepareMotorRun(halfStepDelay);
@@ -448,6 +501,22 @@ unsigned long doRotate(float angle, float rpm, bool bound = true) {
   return nbSteps;
 }
 
+#if MY_ENABLE_SPI
+  void execCommand(String cmd) {
+    Serial.print("cmd:");
+    Serial.println(cmd);
+    Serial.println("--");
+    
+    if (cmd == "startMotorRun") {
+      startMotorRun();
+    } else if (cmd == "pauseMotorRun") {
+        pauseMotorRun();
+    } else if(cmd == "stopMotorRun") {
+        stopMotorRun();
+    }
+  }
+#endif
+
 void onBtnClick() {
   Serial.println("btn click");
   Serial.println(btnState);
@@ -474,6 +543,7 @@ void whileBtnActive() {
   // nbSteps += doFullRotations(1, 493.0, false);
   // nbSteps += doRotate(1.0, 60.0);
   // Serial.println(nbSteps);
+  
   /*
   halfStepDelay += halfStepDelayInc;
   // Serial.println(stepDelay);
@@ -492,6 +562,38 @@ void loop() {
   if (btnState != lastBtnState) {
     onBtnClick();
   }
+
+  #if MY_ENABLE_SERIAL
+    if (Serial.available()) {
+      Serial.println("Reading serial");
+      String msg = "";
+      int inByte;
+      do {
+        inByte = Serial.read();
+        if (inByte != -1 && inByte != '\n') {
+          msg += char(inByte);
+        }
+      } while(inByte != '\n');
+      
+      execCommand(msg);
+    }
+  #endif
+
+  #if MY_ENABLE_SPI
+  String cmd = "";
+  
+  noInterrupts();
+  if (spiProcess) {
+    cmd.concat(spiProcessBuffer);
+    spiProcessBuffer = "";
+    spiProcess = false;
+  }
+  interrupts();
+
+  if (cmd != "") {
+    execCommand(cmd);
+  }
+  #endif
   
   if (btnState && (maxNbSteps < 0 || nbSteps < maxNbSteps)) {
     whileBtnActive();
