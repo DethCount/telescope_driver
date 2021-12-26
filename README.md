@@ -44,5 +44,5 @@ AcquireWrite success: fd 7 MTU 23
 
 > quit
 
-Run command through created socket
+Run command through created socket (max command length: 20 ascii characters)
 > echo 'MOVE X 1.0' > /proc/$(pgrep bluetoothctl)/fd/7
