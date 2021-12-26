@@ -34,6 +34,8 @@ https://www.velleman.eu/downloads/29/vma338_a4v02.pdf
 connect VCC + GND from SPI into VIN + GND on Arduino Uno
 
 # Testing with Raspberry Pi 3B+
+Use [usb-gamepad](https://github.com/DethCount/usb-gamepad) or in terminal:
+
 sudo bluetoothctl
 > connect D8:A9:8B:7E:1E:D2 \
 > menu gatt \
