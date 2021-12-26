@@ -7,6 +7,17 @@ Allowing command execution through SPI and Serial bus
 Arduino Uno (VMA101) with Bluetooth Low Energy HM-10 module (VMA338) Connected with telescope_driver through SPI (pins 50, 51, 52, 53) \
 Proxies Bluetooth data to SPI
 
+# Commands
+Change X motor speed for full speed clockwise
+> MOVE X 1.0
+
+Change X motor speed for full speed counter clockwise
+> MOVE X -1.0
+
+Stop motors
+> STOP
+
+
 # References
 https://github.com/dagoma3d/Marlin-By-Dagoma/ \
 https://github.com/arduino/Arduino \
@@ -23,14 +34,12 @@ https://www.velleman.eu/downloads/29/vma338_a4v02.pdf
 connect VCC + GND from SPI into VIN + GND on Arduino Uno
 
 # Testing with Raspberry Pi 3B+
+Use [usb-gamepad](https://github.com/DethCount/usb-gamepad) or in terminal:
+
 sudo bluetoothctl
 > connect D8:A9:8B:7E:1E:D2 \
 > menu gatt \
-> select-attribute 0000ffe1-0000-1000-8000-008805f9b34fb \
-> acquire-write
+> select-attribute 0000ffe1-0000-1000-8000-00805f9b34fb
 
-AcquireWrite success: fd 7 MTU 23
-
-> quit
-
-echo 'startMotorRun' > /proc/$(pgrep bluetoothctl)/fd/7
+Run command (max length: 20 ascii characters)
+> write "MOVE X 1.0"
