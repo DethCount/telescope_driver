@@ -39,12 +39,7 @@ Use [usb-gamepad](https://github.com/DethCount/usb-gamepad) or in terminal:
 sudo bluetoothctl
 > connect D8:A9:8B:7E:1E:D2 \
 > menu gatt \
-> select-attribute 0000ffe1-0000-1000-8000-00805f9b34fb \
-> acquire-write
+> select-attribute 0000ffe1-0000-1000-8000-00805f9b34fb
 
-AcquireWrite success: fd 7 MTU 23
-
-> quit
-
-Run command through created socket (max command length: 20 ascii characters)
-> echo 'MOVE X 1.0' > /proc/$(pgrep bluetoothctl)/fd/7
+Run command (max length: 20 ascii characters)
+> write "MOVE X 1.0"
