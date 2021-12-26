@@ -39,7 +39,7 @@ Use [usb-gamepad](https://github.com/DethCount/usb-gamepad) or in terminal:
 sudo bluetoothctl
 > connect D8:A9:8B:7E:1E:D2 \
 > menu gatt \
-> select-attribute 0000ffe1-0000-1000-8000-008805f9b34fb \
+> select-attribute 0000ffe1-0000-1000-8000-00805f9b34fb \
 > acquire-write
 
 AcquireWrite success: fd 7 MTU 23
