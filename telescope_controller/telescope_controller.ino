@@ -1,8 +1,16 @@
 #include <SPI.h>
 
-const int bufferSize = 255;
+const int BUFFER_SIZE = 1024;
 const unsigned long baudrate = 9600;
 const SPISettings settings = SPISettings(baudrate, MSBFIRST, SPI_MODE0);
+
+void spiWrite(char buf[BUFFER_SIZE], int bufferLen) {
+  SPI.beginTransaction(settings);
+  digitalWrite(SS, LOW);
+  SPI.transfer(buf, bufferLen);
+  digitalWrite(SS, HIGH);
+  SPI.endTransaction();
+}
 
 void setup() {
   pinMode(MOSI, OUTPUT);
@@ -13,39 +21,32 @@ void setup() {
   digitalWrite(SS, HIGH); // LOW on communication through SPI
   
   Serial.begin(baudrate);
+  
   Serial.println(MOSI);
   Serial.println(MISO);
   Serial.println(SCK);
   Serial.println(SS);
+
+  char stopMsg[5] = {'S', 'T', 'O', 'P', '\n'};
+  spiWrite(stopMsg, 5);
 }
 
 void loop() {
-  char buf[bufferSize] = "";
-  unsigned long bufferLen = 0;
-
-  delay(50);
+  char buf[BUFFER_SIZE] = "";
+  int bufferLen = 0;
   
-  while (Serial.available() && bufferLen < bufferSize) {
-    int inByte = Serial.read();
-    Serial.println(inByte);
-    Serial.println(char(inByte));
-    buf[bufferLen] = char(inByte);
-    bufferLen++;
+  while (Serial.available()) {
+    bufferLen = Serial.readBytesUntil('\n', buf, BUFFER_SIZE);
   }
 
   if (bufferLen > 0) {
-    Serial.print("Writing to SPI:");
-    Serial.println(buf);
-    
-    SPI.beginTransaction(settings);
-    digitalWrite(SS, LOW);
-    SPI.transfer(buf, bufferLen);
-    /*
-    for (int i = 0; i < bufferLen; i++) {
-      Serial.println(0 + buf[i]);'
+    if (bufferLen < BUFFER_SIZE) {
+      buf[bufferLen] = '\n';
+      bufferLen++;
     }
-    */
-    digitalWrite(SS, HIGH);
-    SPI.endTransaction();
+    
+    Serial.print("Write to SPI:");
+    Serial.println(buf);
+    spiWrite(buf, bufferLen);
   }
 }
