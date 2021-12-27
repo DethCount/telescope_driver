@@ -11,11 +11,23 @@ Proxies Bluetooth data to SPI
 Change X motor speed for full speed clockwise
 > MOVE X 1.0
 
-Change X motor speed for full speed counter clockwise
-> MOVE X -1.0
+Change Y motor speed for full speed counter clockwise
+> MOVE Y -1.0
 
-Stop motors
+Change Z motor speed : max length
+> MOVE Z -0.2222222222
+
+Change E motor speed
+> MOVE E 0.75
+
+Stop all motors
 > STOP
+
+Stop single motor
+> STOP X
+> STOP Y
+> STOP Z
+> STOP E
 
 
 # References
